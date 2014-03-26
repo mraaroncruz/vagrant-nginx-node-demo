@@ -1,0 +1,31 @@
+<div class="jumbotron">
+  <h2>Connected to server {{hostname}}</h2>
+  <p class="lead">
+    Chatting with load balancing.
+  </p>
+</div>
+
+<form ng-submit="saveMessage()">
+  <div class="row">
+    <div class="form-group">
+      <div class="col-sm-9">
+        <input type="text" ng-model="message.body" placeholder="Write a new message" class="form-control" />
+      </div>
+      <div class="col-sm-2">
+        <button type="submit" class="btn btn-default">Send</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<div class="row marketing">
+  <div ng-repeat="message in messages | orderBy:'-createdAt'">
+      <h4>{{message.host}}</h4>
+      <p>{{message.body}}</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>♥ from Yeoman, Vagrant and Ansible!</p>
+</div>

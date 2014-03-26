@@ -3,6 +3,15 @@
   git: repo=$git_repo_address dest=$app_root
   tags: app
 
+- name: app | distify app
+  command: grunt dist chdir=$app_root
+
+- name: app | install npm deps
+  command: npm install chdir=$app_root/dist
+
+- name: app | install bower deps
+  command: bower install chdir=$app_root/dist
+
 - name: "app | Install forever (to run Node.js app)."
   npm: name=forever global=yes state=latest
 
@@ -12,5 +21,5 @@
   changed_when: false
 
 - name: "app | Start example Node.js app."
-  command: forever start $app_root/app.js
-  when: "forever_list.stdout.find('$app_root/app.js') == -1"
+  command: forever start $app_root/dist/server.js
+  when: "forever_list.stdout.find('$app_root/dist/server.js') == -1"
