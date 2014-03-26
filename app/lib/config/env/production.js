@@ -5,6 +5,6 @@ module.exports = {
   mongo: {
     uri: process.env.MONGOLAB_URI ||
          process.env.MONGOHQ_URL ||
-         'mongodb://localhost/fullstack'
+         'mongodb://22.22.22.33/demo'
   }
 };
