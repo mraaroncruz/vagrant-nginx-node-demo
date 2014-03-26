@@ -1,0 +1,9 @@
+[webservers]
+vagrantweb
+
+[dbservers]
+vagrantdb
+
+[appservers]
+vagrantapp1
+vagrantapp2

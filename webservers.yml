@@ -1,0 +1,38 @@
+---
+- hosts: webservers
+
+  sudo: yes
+
+  vars:
+    delete_default_vhost: False
+    user: www-data
+    worker_processes: $ansible_processor_count
+    pid: /var/run/nginx.pid
+    worker_connections: 768
+
+    app_name: demo
+    app_root: /apps/demo
+    app_server_addresses:
+      - 22.22.22.22:3000
+      - 22.22.22.23:3000
+
+
+  tasks:
+    - include: roles/nginx/tasks/setup-nginx.yml
+
+    - name: App | Application nginx config
+      template: src=roles/app/templates/nginx-vhost.conf.j2 dest=/etc/nginx/sites-enabled/{{app_name}}
+      notify:
+        - restart nginx
+
+  handlers:
+    - include: roles/nginx/handlers/handlers.yml
+
+  pre_tasks:
+    - name: check apt last update
+      stat: path=/var/cache/apt
+      register: apt_cache_stat
+    - name: update apt if needed
+      apt: update_cache=yes
+      when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+

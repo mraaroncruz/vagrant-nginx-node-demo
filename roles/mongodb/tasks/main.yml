@@ -1,0 +1,10 @@
+---
+- name: mongodb | install mongodb apt package
+  apt: pkg=mongodb state=installed
+  tags: mongo
+
+- name: mongodb | copy config
+  copy: src=mongo.conf dest=/etc/mongodb.conf
+  notify:
+    - restart mongodb
+  tags: mongo

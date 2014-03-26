@@ -1,0 +1,16 @@
+---
+- name: app | clone git repo
+  git: repo=$git_repo_address dest=$app_root
+  tags: app
+
+- name: "app | Install forever (to run Node.js app)."
+  npm: name=forever global=yes state=latest
+
+- name: "app | Check list of Node.js apps running."
+  command: forever list
+  register: forever_list
+  changed_when: false
+
+- name: "app | Start example Node.js app."
+  command: forever start $app_root/$app_name/app.js
+  when: "forever_list.stdout.find('$app_root/$app_name/app.js') == -1"

@@ -1,0 +1,31 @@
+---
+- hosts: appservers
+
+  sudo: yes
+
+  roles:
+    - node
+    - app
+
+  vars:
+    git_repo_address: git://github.com/pferdefleisch/vagrant-nginx-node-demo.git
+
+    node_version: "0.10.12"
+    node_prefix: "node-v${node_version}"
+    node_tarball: "${node_prefix}.tar.gz"
+    node_path: "/usr/local"
+
+    app_name: demo
+    app_root: /apps/demo
+    app_server_addresses:
+      - 22.22.22.22:3000
+      - 22.22.22.23:3000
+
+  pre_tasks:
+    - name: check apt last update
+      stat: path=/var/cache/apt
+      register: apt_cache_stat
+    - name: update apt if needed
+      apt: update_cache=yes
+      when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+
