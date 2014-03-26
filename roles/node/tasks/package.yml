@@ -9,8 +9,17 @@
 #   - node_prefix = The prefix
 #   - node_tarball = The tarball filename at nodejs.org
 #   - node_version = The wanted version of node to be installed
-- name: Node.js | Installing node from apt
+- name: Node.js | repo deps
   apt: name={{item}} state=installed
   with_items:
-    - nodejs
-    - npm
+    - software-properties-common
+    - python-software-properties
+
+- name: Node.js | add repository
+  command: add-apt-repository -y ppa:chris-lea/node.js
+
+- name: Node.js | apt-get update
+  command: apt-get update
+
+- name: Node.js | Installing node from apt
+  apt: name=nodejs state=installed

@@ -3,17 +3,24 @@
   git: repo=$git_repo_address dest=$app_root
   tags: app
 
-- name: app | distify app
-  command: grunt dist chdir=$app_root
+- name: app | install npm deps for app
+  npm: path=$app_root/app global=yes
 
-- name: app | install npm deps
-  command: npm install chdir=$app_root/dist
+- name: "app | Install forever and grunt."
+  npm: name={{item}} global=yes state=latest
+  with_items:
+    - forever
+    - grunt-cli
+    - coffee-script
+
+- name: app | distify app
+  command: grunt build chdir=$app_root/app
+
+- name: app | install npm deps for dist
+  npm: path=$app_root/app/dist
 
 - name: app | install bower deps
-  command: bower install chdir=$app_root/dist
-
-- name: "app | Install forever (to run Node.js app)."
-  npm: name=forever global=yes state=latest
+  command: bower install chdir=$app_root/app/dist
 
 - name: "app | Check list of Node.js apps running."
   command: forever list
@@ -21,5 +28,5 @@
   changed_when: false
 
 - name: "app | Start example Node.js app."
-  command: forever start $app_root/dist/server.js
-  when: "forever_list.stdout.find('$app_root/dist/server.js') == -1"
+  command: forever start $app_root/app/dist/server.js
+  when: "forever_list.stdout.find('$app_root/app/dist/server.js') == -1"
